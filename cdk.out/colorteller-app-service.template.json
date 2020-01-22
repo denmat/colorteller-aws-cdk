@@ -1,0 +1,3661 @@
+{
+  "Resources": {
+    "fargateserviceautoscalingD107CF93": {
+      "Type": "AWS::ECS::Cluster",
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/fargate-service-autoscaling/Resource"
+      }
+    },
+    "fargateserviceautoscalingDefaultServiceDiscoveryNamespaceDF6E9E27": {
+      "Type": "AWS::ServiceDiscovery::PrivateDnsNamespace",
+      "Properties": {
+        "Name": "svc.test.local",
+        "Vpc": {
+          "Fn::ImportValue": "colorteller-network:ExportsOutputRefcolortellervpcA393273978642635"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/fargate-service-autoscaling/DefaultServiceDiscoveryNamespace/Resource"
+      }
+    },
+    "svctestlocalE73F461F": {
+      "Type": "AWS::ServiceDiscovery::Service",
+      "Properties": {
+        "DnsConfig": {
+          "DnsRecords": [
+            {
+              "TTL": 60,
+              "Type": "A"
+            }
+          ],
+          "NamespaceId": {
+            "Fn::GetAtt": [
+              "fargateserviceautoscalingDefaultServiceDiscoveryNamespaceDF6E9E27",
+              "Id"
+            ]
+          },
+          "RoutingPolicy": "WEIGHTED"
+        },
+        "NamespaceId": {
+          "Fn::GetAtt": [
+            "fargateserviceautoscalingDefaultServiceDiscoveryNamespaceDF6E9E27",
+            "Id"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/svc.test.local/Resource"
+      }
+    },
+    "executionroleD9A39BE6": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ecs-tasks.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/AWSCodeDeployRoleForECS"
+              ]
+            ]
+          },
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/execution-role/Resource"
+      }
+    },
+    "executionroleDefaultPolicy497F11A3": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":ecr:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":repository/",
+                    {
+                      "Fn::GetAtt": [
+                        "gatewaytaskgatewayAssetImageAdoptRepository04DFDE13",
+                        "RepositoryName"
+                      ]
+                    }
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": "ecr:GetAuthorizationToken",
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ecscolorteller95A3B0F7",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":ecr:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":840364872350:aws-appmesh-envoy"
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":ecr:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":repository/",
+                    {
+                      "Fn::GetAtt": [
+                        "blacktaskblackAssetImageAdoptRepository94CA9D56",
+                        "RepositoryName"
+                      ]
+                    }
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":ecr:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":repository/",
+                    {
+                      "Fn::GetAtt": [
+                        "bluetaskblueAssetImageAdoptRepository70E8C9D0",
+                        "RepositoryName"
+                      ]
+                    }
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":ecr:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":repository/",
+                    {
+                      "Fn::GetAtt": [
+                        "redtaskredAssetImageAdoptRepository2DED75C6",
+                        "RepositoryName"
+                      ]
+                    }
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":ecr:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":repository/",
+                    {
+                      "Fn::GetAtt": [
+                        "whitetaskwhiteAssetImageAdoptRepository7347D5EA",
+                        "RepositoryName"
+                      ]
+                    }
+                  ]
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "executionroleDefaultPolicy497F11A3",
+        "Roles": [
+          {
+            "Ref": "executionroleD9A39BE6"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/execution-role/DefaultPolicy/Resource"
+      }
+    },
+    "taskrole5938D619": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ecs-tasks.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/AWSAppMeshEnvoyAccess"
+              ]
+            ]
+          },
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/CloudWatchFullAccess"
+              ]
+            ]
+          },
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/AWSXRayDaemonWriteAccess"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/task-role/Resource"
+      }
+    },
+    "ecscolorteller95A3B0F7": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "RetentionInDays": 1
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/--ecs--colorteller/Resource"
+      }
+    },
+    "gatewaytask977F917F": {
+      "Type": "AWS::ECS::TaskDefinition",
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Environment": [
+              {
+                "Name": "SERVER_PORT",
+                "Value": "9080"
+              },
+              {
+                "Name": "STAGE",
+                "Value": "v1.1"
+              },
+              {
+                "Name": "COLOR_TELLER_ENDPOINT",
+                "Value": "colorteller.svc.test.local:9080"
+              },
+              {
+                "Name": "TCP_ECHO_ENDPOINT",
+                "Value": "tcpecho.svc.test.local:2701"
+              }
+            ],
+            "Essential": true,
+            "Image": {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ".dkr.ecr.",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/",
+                  {
+                    "Fn::Select": [
+                      0,
+                      {
+                        "Fn::Split": [
+                          "@sha256:",
+                          {
+                            "Ref": "AssetParameters1ba77edd2a78131f0a85162a8e550a8f1e85c7d3461230d59220cef9aa60c7bfImageNameC66728B3"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "@sha256:",
+                  {
+                    "Fn::Select": [
+                      1,
+                      {
+                        "Fn::Split": [
+                          "@sha256:",
+                          {
+                            "Ref": "AssetParameters1ba77edd2a78131f0a85162a8e550a8f1e85c7d3461230d59220cef9aa60c7bfImageNameC66728B3"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              ]
+            },
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "ecscolorteller95A3B0F7"
+                },
+                "awslogs-stream-prefix": "gateway",
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                }
+              }
+            },
+            "Name": "gateway",
+            "PortMappings": [
+              {
+                "ContainerPort": 9080,
+                "Protocol": "tcp"
+              }
+            ]
+          },
+          {
+            "Essential": true,
+            "Image": "amazon/aws-xray-daemon",
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "ecscolorteller95A3B0F7"
+                },
+                "awslogs-stream-prefix": "gateway",
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                }
+              }
+            },
+            "Name": "xray",
+            "PortMappings": [
+              {
+                "ContainerPort": 2000,
+                "Protocol": "udp"
+              }
+            ]
+          },
+          {
+            "Environment": [
+              {
+                "Name": "ENVOY_LOG_LEVEL",
+                "Value": "debug"
+              },
+              {
+                "Name": "ENABLE_ENVOY_XRAY_TRACING",
+                "Value": "1"
+              },
+              {
+                "Name": "ENABLE_ENVOY_STATS_TAGS",
+                "Value": "1"
+              },
+              {
+                "Name": "APPMESH_VIRTUAL_NODE_NAME",
+                "Value": "mesh/ColorTellerAppMesh/virtualNode/gateway"
+              },
+              {
+                "Name": "APPMESH_XDS_ENDPOINT",
+                "Value": ""
+              }
+            ],
+            "Essential": true,
+            "HealthCheck": {
+              "Command": [
+                "CMD-SHELL",
+                "curl -s http://localhost:9901/ready |grep -q LIVE"
+              ],
+              "Interval": 30,
+              "Retries": 3,
+              "Timeout": 5
+            },
+            "Image": {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Fn::Select": [
+                      4,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":ecr:",
+                                {
+                                  "Ref": "AWS::Region"
+                                },
+                                ":840364872350:aws-appmesh-envoy"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  ".dkr.ecr.",
+                  {
+                    "Fn::Select": [
+                      3,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":ecr:",
+                                {
+                                  "Ref": "AWS::Region"
+                                },
+                                ":840364872350:aws-appmesh-envoy"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/aws-appmesh-envoy:v1.12.1.1-prod"
+                ]
+              ]
+            },
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "ecscolorteller95A3B0F7"
+                },
+                "awslogs-stream-prefix": "gateway",
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                }
+              }
+            },
+            "Name": "envoy",
+            "PortMappings": [
+              {
+                "ContainerPort": 9901,
+                "Protocol": "tcp"
+              },
+              {
+                "ContainerPort": 15000,
+                "Protocol": "tcp"
+              },
+              {
+                "ContainerPort": 15001,
+                "Protocol": "tcp"
+              }
+            ],
+            "Ulimits": [
+              {
+                "HardLimit": 15000,
+                "Name": "nofile",
+                "SoftLimit": 15000
+              }
+            ],
+            "User": "1337"
+          }
+        ],
+        "Cpu": "256",
+        "ExecutionRoleArn": {
+          "Fn::GetAtt": [
+            "executionroleD9A39BE6",
+            "Arn"
+          ]
+        },
+        "Family": "colortellerappservicegatewaytaskC87E1A07",
+        "Memory": "512",
+        "NetworkMode": "awsvpc",
+        "ProxyConfiguration": {
+          "ContainerName": "envoy",
+          "ProxyConfigurationProperties": [
+            {
+              "Name": "AppPorts",
+              "Value": "9080"
+            },
+            {
+              "Name": "ProxyEgressPort",
+              "Value": "15001"
+            },
+            {
+              "Name": "ProxyIngressPort",
+              "Value": "15000"
+            },
+            {
+              "Name": "EgressIgnoredIPs",
+              "Value": "169.254.170.2,169.254.169.254"
+            },
+            {
+              "Name": "IgnoredUID",
+              "Value": "1337"
+            }
+          ],
+          "Type": "APPMESH"
+        },
+        "RequiresCompatibilities": [
+          "FARGATE"
+        ],
+        "TaskRoleArn": {
+          "Fn::GetAtt": [
+            "taskrole5938D619",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/gateway_task/Resource"
+      }
+    },
+    "gatewaytaskgatewayAssetImageAdoptRepository04DFDE13": {
+      "Type": "Custom::ECRAdoptedRepository",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62c52BE89E9",
+            "Arn"
+          ]
+        },
+        "RepositoryName": {
+          "Fn::Select": [
+            0,
+            {
+              "Fn::Split": [
+                "@sha256:",
+                {
+                  "Ref": "AssetParameters1ba77edd2a78131f0a85162a8e550a8f1e85c7d3461230d59220cef9aa60c7bfImageNameC66728B3"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "DependsOn": [
+        "AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62cServiceRoleDefaultPolicy6BC8737C",
+        "AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62cServiceRoleD788AA17"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/gateway_task/gateway/AssetImage/AdoptRepository/Resource/Default"
+      }
+    },
+    "AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62cServiceRoleD788AA17": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62c/ServiceRole/Resource"
+      }
+    },
+    "AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62cServiceRoleDefaultPolicy6BC8737C": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "ecr:GetRepositoryPolicy",
+                "ecr:SetRepositoryPolicy",
+                "ecr:DeleteRepository",
+                "ecr:ListImages",
+                "ecr:BatchDeleteImage"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":ecr:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":repository/",
+                    {
+                      "Fn::Select": [
+                        0,
+                        {
+                          "Fn::Split": [
+                            "@sha256:",
+                            {
+                              "Ref": "AssetParameters1ba77edd2a78131f0a85162a8e550a8f1e85c7d3461230d59220cef9aa60c7bfImageNameC66728B3"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                ]
+              }
+            },
+            {
+              "Action": [
+                "ecr:GetRepositoryPolicy",
+                "ecr:SetRepositoryPolicy",
+                "ecr:DeleteRepository",
+                "ecr:ListImages",
+                "ecr:BatchDeleteImage"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":ecr:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":repository/",
+                    {
+                      "Fn::Select": [
+                        0,
+                        {
+                          "Fn::Split": [
+                            "@sha256:",
+                            {
+                              "Ref": "AssetParametersf44bb5430616205e9f976b9be30d7dd8b397093693b51ed9ec27a4918b7830a9ImageNameEF038FCC"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62cServiceRoleDefaultPolicy6BC8737C",
+        "Roles": [
+          {
+            "Ref": "AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62cServiceRoleD788AA17"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62c/ServiceRole/DefaultPolicy/Resource"
+      }
+    },
+    "AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62c52BE89E9": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "AssetParametersa65ac4beaa2b5a7b20eebf3b7c5c1c886b71428afa377e02dab0d10ab3be57e7S3Bucket7CBBD48C"
+          },
+          "S3Key": {
+            "Fn::Join": [
+              "",
+              [
+                {
+                  "Fn::Select": [
+                    0,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParametersa65ac4beaa2b5a7b20eebf3b7c5c1c886b71428afa377e02dab0d10ab3be57e7S3VersionKey87E3D057"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Fn::Select": [
+                    1,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParametersa65ac4beaa2b5a7b20eebf3b7c5c1c886b71428afa377e02dab0d10ab3be57e7S3VersionKey87E3D057"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            ]
+          }
+        },
+        "Handler": "handler.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62cServiceRoleD788AA17",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs10.x",
+        "Timeout": 300
+      },
+      "DependsOn": [
+        "AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62cServiceRoleDefaultPolicy6BC8737C",
+        "AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62cServiceRoleD788AA17"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62c/Resource",
+        "aws:asset:path": "asset.a65ac4beaa2b5a7b20eebf3b7c5c1c886b71428afa377e02dab0d10ab3be57e7",
+        "aws:asset:property": "Code"
+      }
+    },
+    "blacktaskA43618AA": {
+      "Type": "AWS::ECS::TaskDefinition",
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Environment": [
+              {
+                "Name": "ENVOY_LOG_LEVEL",
+                "Value": "info"
+              },
+              {
+                "Name": "ENABLE_ENVOY_XRAY_TRACING",
+                "Value": "1"
+              },
+              {
+                "Name": "ENABLE_ENVOY_STATS_TAGS",
+                "Value": "1"
+              },
+              {
+                "Name": "APPMESH_VIRTUAL_NODE_NAME",
+                "Value": "mesh/ColorTellerAppMesh/virtualNode/black"
+              },
+              {
+                "Name": "APPMESH_XDS_ENDPOINT",
+                "Value": ""
+              }
+            ],
+            "Essential": true,
+            "HealthCheck": {
+              "Command": [
+                "CMD-SHELL",
+                "curl -s http://localhost:9901/ready |grep -q LIVE"
+              ],
+              "Interval": 30,
+              "Retries": 3,
+              "Timeout": 5
+            },
+            "Image": {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Fn::Select": [
+                      4,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":ecr:",
+                                {
+                                  "Ref": "AWS::Region"
+                                },
+                                ":840364872350:aws-appmesh-envoy"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  ".dkr.ecr.",
+                  {
+                    "Fn::Select": [
+                      3,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":ecr:",
+                                {
+                                  "Ref": "AWS::Region"
+                                },
+                                ":840364872350:aws-appmesh-envoy"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/aws-appmesh-envoy:v1.12.1.1-prod"
+                ]
+              ]
+            },
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "ecscolorteller95A3B0F7"
+                },
+                "awslogs-stream-prefix": "black",
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                }
+              }
+            },
+            "Name": "envoy",
+            "PortMappings": [
+              {
+                "ContainerPort": 9901,
+                "Protocol": "tcp"
+              },
+              {
+                "ContainerPort": 15000,
+                "Protocol": "tcp"
+              },
+              {
+                "ContainerPort": 15001,
+                "Protocol": "tcp"
+              }
+            ],
+            "Ulimits": [
+              {
+                "HardLimit": 15000,
+                "Name": "nofile",
+                "SoftLimit": 15000
+              }
+            ],
+            "User": "1337"
+          },
+          {
+            "DependsOn": [
+              {
+                "Condition": "HEALTHY",
+                "ContainerName": "envoy"
+              }
+            ],
+            "Environment": [
+              {
+                "Name": "COLOR",
+                "Value": "black"
+              },
+              {
+                "Name": "SERVER_PORT",
+                "Value": "9080"
+              },
+              {
+                "Name": "STAGE",
+                "Value": "v1.1"
+              }
+            ],
+            "Essential": true,
+            "Image": {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ".dkr.ecr.",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/",
+                  {
+                    "Fn::Select": [
+                      0,
+                      {
+                        "Fn::Split": [
+                          "@sha256:",
+                          {
+                            "Ref": "AssetParametersf44bb5430616205e9f976b9be30d7dd8b397093693b51ed9ec27a4918b7830a9ImageNameEF038FCC"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "@sha256:",
+                  {
+                    "Fn::Select": [
+                      1,
+                      {
+                        "Fn::Split": [
+                          "@sha256:",
+                          {
+                            "Ref": "AssetParametersf44bb5430616205e9f976b9be30d7dd8b397093693b51ed9ec27a4918b7830a9ImageNameEF038FCC"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              ]
+            },
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "ecscolorteller95A3B0F7"
+                },
+                "awslogs-stream-prefix": "black",
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                }
+              }
+            },
+            "Name": "black",
+            "PortMappings": [
+              {
+                "ContainerPort": 9080,
+                "Protocol": "tcp"
+              }
+            ]
+          },
+          {
+            "Essential": true,
+            "Image": "amazon/aws-xray-daemon",
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "ecscolorteller95A3B0F7"
+                },
+                "awslogs-stream-prefix": "black",
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                }
+              }
+            },
+            "Name": "xray",
+            "PortMappings": [
+              {
+                "ContainerPort": 2000,
+                "Protocol": "udp"
+              }
+            ]
+          }
+        ],
+        "Cpu": "256",
+        "ExecutionRoleArn": {
+          "Fn::GetAtt": [
+            "executionroleD9A39BE6",
+            "Arn"
+          ]
+        },
+        "Family": "black",
+        "Memory": "512",
+        "NetworkMode": "awsvpc",
+        "ProxyConfiguration": {
+          "ContainerName": "envoy",
+          "ProxyConfigurationProperties": [
+            {
+              "Name": "AppPorts",
+              "Value": "9080"
+            },
+            {
+              "Name": "ProxyEgressPort",
+              "Value": "15001"
+            },
+            {
+              "Name": "ProxyIngressPort",
+              "Value": "15000"
+            },
+            {
+              "Name": "EgressIgnoredIPs",
+              "Value": "169.254.170.2,169.254.169.254"
+            },
+            {
+              "Name": "IgnoredUID",
+              "Value": "1337"
+            }
+          ],
+          "Type": "APPMESH"
+        },
+        "RequiresCompatibilities": [
+          "FARGATE"
+        ],
+        "TaskRoleArn": {
+          "Fn::GetAtt": [
+            "taskrole5938D619",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/black-task/Resource"
+      }
+    },
+    "blacktaskblackAssetImageAdoptRepository94CA9D56": {
+      "Type": "Custom::ECRAdoptedRepository",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62c52BE89E9",
+            "Arn"
+          ]
+        },
+        "RepositoryName": {
+          "Fn::Select": [
+            0,
+            {
+              "Fn::Split": [
+                "@sha256:",
+                {
+                  "Ref": "AssetParametersf44bb5430616205e9f976b9be30d7dd8b397093693b51ed9ec27a4918b7830a9ImageNameEF038FCC"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "DependsOn": [
+        "AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62cServiceRoleDefaultPolicy6BC8737C",
+        "AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62cServiceRoleD788AA17"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/black-task/black/AssetImage/AdoptRepository/Resource/Default"
+      }
+    },
+    "bluetaskF8D729FD": {
+      "Type": "AWS::ECS::TaskDefinition",
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Environment": [
+              {
+                "Name": "ENVOY_LOG_LEVEL",
+                "Value": "info"
+              },
+              {
+                "Name": "ENABLE_ENVOY_XRAY_TRACING",
+                "Value": "1"
+              },
+              {
+                "Name": "ENABLE_ENVOY_STATS_TAGS",
+                "Value": "1"
+              },
+              {
+                "Name": "APPMESH_VIRTUAL_NODE_NAME",
+                "Value": "mesh/ColorTellerAppMesh/virtualNode/blue"
+              },
+              {
+                "Name": "APPMESH_XDS_ENDPOINT",
+                "Value": ""
+              }
+            ],
+            "Essential": true,
+            "HealthCheck": {
+              "Command": [
+                "CMD-SHELL",
+                "curl -s http://localhost:9901/ready |grep -q LIVE"
+              ],
+              "Interval": 30,
+              "Retries": 3,
+              "Timeout": 5
+            },
+            "Image": {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Fn::Select": [
+                      4,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":ecr:",
+                                {
+                                  "Ref": "AWS::Region"
+                                },
+                                ":840364872350:aws-appmesh-envoy"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  ".dkr.ecr.",
+                  {
+                    "Fn::Select": [
+                      3,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":ecr:",
+                                {
+                                  "Ref": "AWS::Region"
+                                },
+                                ":840364872350:aws-appmesh-envoy"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/aws-appmesh-envoy:v1.12.1.1-prod"
+                ]
+              ]
+            },
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "ecscolorteller95A3B0F7"
+                },
+                "awslogs-stream-prefix": "blue",
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                }
+              }
+            },
+            "Name": "envoy",
+            "PortMappings": [
+              {
+                "ContainerPort": 9901,
+                "Protocol": "tcp"
+              },
+              {
+                "ContainerPort": 15000,
+                "Protocol": "tcp"
+              },
+              {
+                "ContainerPort": 15001,
+                "Protocol": "tcp"
+              }
+            ],
+            "Ulimits": [
+              {
+                "HardLimit": 15000,
+                "Name": "nofile",
+                "SoftLimit": 15000
+              }
+            ],
+            "User": "1337"
+          },
+          {
+            "DependsOn": [
+              {
+                "Condition": "HEALTHY",
+                "ContainerName": "envoy"
+              }
+            ],
+            "Environment": [
+              {
+                "Name": "COLOR",
+                "Value": "black"
+              },
+              {
+                "Name": "SERVER_PORT",
+                "Value": "9080"
+              },
+              {
+                "Name": "STAGE",
+                "Value": "v1.1"
+              }
+            ],
+            "Essential": true,
+            "Image": {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ".dkr.ecr.",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/",
+                  {
+                    "Fn::Select": [
+                      0,
+                      {
+                        "Fn::Split": [
+                          "@sha256:",
+                          {
+                            "Ref": "AssetParametersf44bb5430616205e9f976b9be30d7dd8b397093693b51ed9ec27a4918b7830a9ImageNameEF038FCC"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "@sha256:",
+                  {
+                    "Fn::Select": [
+                      1,
+                      {
+                        "Fn::Split": [
+                          "@sha256:",
+                          {
+                            "Ref": "AssetParametersf44bb5430616205e9f976b9be30d7dd8b397093693b51ed9ec27a4918b7830a9ImageNameEF038FCC"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              ]
+            },
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "ecscolorteller95A3B0F7"
+                },
+                "awslogs-stream-prefix": "blue",
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                }
+              }
+            },
+            "Name": "blue",
+            "PortMappings": [
+              {
+                "ContainerPort": 9080,
+                "Protocol": "tcp"
+              }
+            ]
+          },
+          {
+            "Essential": true,
+            "Image": "amazon/aws-xray-daemon",
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "ecscolorteller95A3B0F7"
+                },
+                "awslogs-stream-prefix": "blue",
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                }
+              }
+            },
+            "Name": "xray",
+            "PortMappings": [
+              {
+                "ContainerPort": 2000,
+                "Protocol": "udp"
+              }
+            ]
+          }
+        ],
+        "Cpu": "256",
+        "ExecutionRoleArn": {
+          "Fn::GetAtt": [
+            "executionroleD9A39BE6",
+            "Arn"
+          ]
+        },
+        "Family": "blue",
+        "Memory": "512",
+        "NetworkMode": "awsvpc",
+        "ProxyConfiguration": {
+          "ContainerName": "envoy",
+          "ProxyConfigurationProperties": [
+            {
+              "Name": "AppPorts",
+              "Value": "9080"
+            },
+            {
+              "Name": "ProxyEgressPort",
+              "Value": "15001"
+            },
+            {
+              "Name": "ProxyIngressPort",
+              "Value": "15000"
+            },
+            {
+              "Name": "EgressIgnoredIPs",
+              "Value": "169.254.170.2,169.254.169.254"
+            },
+            {
+              "Name": "IgnoredUID",
+              "Value": "1337"
+            }
+          ],
+          "Type": "APPMESH"
+        },
+        "RequiresCompatibilities": [
+          "FARGATE"
+        ],
+        "TaskRoleArn": {
+          "Fn::GetAtt": [
+            "taskrole5938D619",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/blue-task/Resource"
+      }
+    },
+    "bluetaskblueAssetImageAdoptRepository70E8C9D0": {
+      "Type": "Custom::ECRAdoptedRepository",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62c52BE89E9",
+            "Arn"
+          ]
+        },
+        "RepositoryName": {
+          "Fn::Select": [
+            0,
+            {
+              "Fn::Split": [
+                "@sha256:",
+                {
+                  "Ref": "AssetParametersf44bb5430616205e9f976b9be30d7dd8b397093693b51ed9ec27a4918b7830a9ImageNameEF038FCC"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "DependsOn": [
+        "AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62cServiceRoleDefaultPolicy6BC8737C",
+        "AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62cServiceRoleD788AA17"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/blue-task/blue/AssetImage/AdoptRepository/Resource/Default"
+      }
+    },
+    "redtaskE70C9D2E": {
+      "Type": "AWS::ECS::TaskDefinition",
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Environment": [
+              {
+                "Name": "ENVOY_LOG_LEVEL",
+                "Value": "info"
+              },
+              {
+                "Name": "ENABLE_ENVOY_XRAY_TRACING",
+                "Value": "1"
+              },
+              {
+                "Name": "ENABLE_ENVOY_STATS_TAGS",
+                "Value": "1"
+              },
+              {
+                "Name": "APPMESH_VIRTUAL_NODE_NAME",
+                "Value": "mesh/ColorTellerAppMesh/virtualNode/red"
+              },
+              {
+                "Name": "APPMESH_XDS_ENDPOINT",
+                "Value": ""
+              }
+            ],
+            "Essential": true,
+            "HealthCheck": {
+              "Command": [
+                "CMD-SHELL",
+                "curl -s http://localhost:9901/ready |grep -q LIVE"
+              ],
+              "Interval": 30,
+              "Retries": 3,
+              "Timeout": 5
+            },
+            "Image": {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Fn::Select": [
+                      4,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":ecr:",
+                                {
+                                  "Ref": "AWS::Region"
+                                },
+                                ":840364872350:aws-appmesh-envoy"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  ".dkr.ecr.",
+                  {
+                    "Fn::Select": [
+                      3,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":ecr:",
+                                {
+                                  "Ref": "AWS::Region"
+                                },
+                                ":840364872350:aws-appmesh-envoy"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/aws-appmesh-envoy:v1.12.1.1-prod"
+                ]
+              ]
+            },
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "ecscolorteller95A3B0F7"
+                },
+                "awslogs-stream-prefix": "red",
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                }
+              }
+            },
+            "Name": "envoy",
+            "PortMappings": [
+              {
+                "ContainerPort": 9901,
+                "Protocol": "tcp"
+              },
+              {
+                "ContainerPort": 15000,
+                "Protocol": "tcp"
+              },
+              {
+                "ContainerPort": 15001,
+                "Protocol": "tcp"
+              }
+            ],
+            "Ulimits": [
+              {
+                "HardLimit": 15000,
+                "Name": "nofile",
+                "SoftLimit": 15000
+              }
+            ],
+            "User": "1337"
+          },
+          {
+            "DependsOn": [
+              {
+                "Condition": "HEALTHY",
+                "ContainerName": "envoy"
+              }
+            ],
+            "Environment": [
+              {
+                "Name": "COLOR",
+                "Value": "red"
+              },
+              {
+                "Name": "SERVER_PORT",
+                "Value": "9080"
+              },
+              {
+                "Name": "STAGE",
+                "Value": "v1.2"
+              }
+            ],
+            "Essential": true,
+            "Image": {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ".dkr.ecr.",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/",
+                  {
+                    "Fn::Select": [
+                      0,
+                      {
+                        "Fn::Split": [
+                          "@sha256:",
+                          {
+                            "Ref": "AssetParametersf44bb5430616205e9f976b9be30d7dd8b397093693b51ed9ec27a4918b7830a9ImageNameEF038FCC"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "@sha256:",
+                  {
+                    "Fn::Select": [
+                      1,
+                      {
+                        "Fn::Split": [
+                          "@sha256:",
+                          {
+                            "Ref": "AssetParametersf44bb5430616205e9f976b9be30d7dd8b397093693b51ed9ec27a4918b7830a9ImageNameEF038FCC"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              ]
+            },
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "ecscolorteller95A3B0F7"
+                },
+                "awslogs-stream-prefix": "red",
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                }
+              }
+            },
+            "Name": "red",
+            "PortMappings": [
+              {
+                "ContainerPort": 9080,
+                "Protocol": "tcp"
+              }
+            ]
+          },
+          {
+            "Essential": true,
+            "Image": "amazon/aws-xray-daemon",
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "ecscolorteller95A3B0F7"
+                },
+                "awslogs-stream-prefix": "red",
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                }
+              }
+            },
+            "Name": "xray",
+            "PortMappings": [
+              {
+                "ContainerPort": 2000,
+                "Protocol": "udp"
+              }
+            ]
+          }
+        ],
+        "Cpu": "256",
+        "ExecutionRoleArn": {
+          "Fn::GetAtt": [
+            "executionroleD9A39BE6",
+            "Arn"
+          ]
+        },
+        "Family": "red-task",
+        "Memory": "512",
+        "NetworkMode": "awsvpc",
+        "ProxyConfiguration": {
+          "ContainerName": "envoy",
+          "ProxyConfigurationProperties": [
+            {
+              "Name": "AppPorts",
+              "Value": "9080"
+            },
+            {
+              "Name": "ProxyEgressPort",
+              "Value": "15001"
+            },
+            {
+              "Name": "ProxyIngressPort",
+              "Value": "15000"
+            },
+            {
+              "Name": "EgressIgnoredIPs",
+              "Value": "169.254.170.2,169.254.169.254"
+            },
+            {
+              "Name": "IgnoredUID",
+              "Value": "1337"
+            }
+          ],
+          "Type": "APPMESH"
+        },
+        "RequiresCompatibilities": [
+          "FARGATE"
+        ],
+        "TaskRoleArn": {
+          "Fn::GetAtt": [
+            "taskrole5938D619",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/red-task/Resource"
+      }
+    },
+    "redtaskredAssetImageAdoptRepository2DED75C6": {
+      "Type": "Custom::ECRAdoptedRepository",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62c52BE89E9",
+            "Arn"
+          ]
+        },
+        "RepositoryName": {
+          "Fn::Select": [
+            0,
+            {
+              "Fn::Split": [
+                "@sha256:",
+                {
+                  "Ref": "AssetParametersf44bb5430616205e9f976b9be30d7dd8b397093693b51ed9ec27a4918b7830a9ImageNameEF038FCC"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "DependsOn": [
+        "AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62cServiceRoleDefaultPolicy6BC8737C",
+        "AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62cServiceRoleD788AA17"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/red-task/red/AssetImage/AdoptRepository/Resource/Default"
+      }
+    },
+    "whitetask6B6C2B2A": {
+      "Type": "AWS::ECS::TaskDefinition",
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Environment": [
+              {
+                "Name": "ENVOY_LOG_LEVEL",
+                "Value": "info"
+              },
+              {
+                "Name": "ENABLE_ENVOY_XRAY_TRACING",
+                "Value": "1"
+              },
+              {
+                "Name": "ENABLE_ENVOY_STATS_TAGS",
+                "Value": "1"
+              },
+              {
+                "Name": "APPMESH_VIRTUAL_NODE_NAME",
+                "Value": "mesh/ColorTellerAppMesh/virtualNode/white"
+              },
+              {
+                "Name": "APPMESH_XDS_ENDPOINT",
+                "Value": ""
+              }
+            ],
+            "Essential": true,
+            "HealthCheck": {
+              "Command": [
+                "CMD-SHELL",
+                "curl -s http://localhost:9901/ready |grep -q LIVE"
+              ],
+              "Interval": 30,
+              "Retries": 3,
+              "Timeout": 5
+            },
+            "Image": {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Fn::Select": [
+                      4,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":ecr:",
+                                {
+                                  "Ref": "AWS::Region"
+                                },
+                                ":840364872350:aws-appmesh-envoy"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  ".dkr.ecr.",
+                  {
+                    "Fn::Select": [
+                      3,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":ecr:",
+                                {
+                                  "Ref": "AWS::Region"
+                                },
+                                ":840364872350:aws-appmesh-envoy"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/aws-appmesh-envoy:v1.12.1.1-prod"
+                ]
+              ]
+            },
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "ecscolorteller95A3B0F7"
+                },
+                "awslogs-stream-prefix": "white",
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                }
+              }
+            },
+            "Name": "envoy",
+            "PortMappings": [
+              {
+                "ContainerPort": 9901,
+                "Protocol": "tcp"
+              },
+              {
+                "ContainerPort": 15000,
+                "Protocol": "tcp"
+              },
+              {
+                "ContainerPort": 15001,
+                "Protocol": "tcp"
+              }
+            ],
+            "Ulimits": [
+              {
+                "HardLimit": 15000,
+                "Name": "nofile",
+                "SoftLimit": 15000
+              }
+            ],
+            "User": "1337"
+          },
+          {
+            "DependsOn": [
+              {
+                "Condition": "HEALTHY",
+                "ContainerName": "envoy"
+              }
+            ],
+            "Environment": [
+              {
+                "Name": "COLOR",
+                "Value": "white"
+              },
+              {
+                "Name": "SERVER_PORT",
+                "Value": "9080"
+              },
+              {
+                "Name": "STAGE",
+                "Value": "v1.1"
+              }
+            ],
+            "Essential": true,
+            "Image": {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ".dkr.ecr.",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/",
+                  {
+                    "Fn::Select": [
+                      0,
+                      {
+                        "Fn::Split": [
+                          "@sha256:",
+                          {
+                            "Ref": "AssetParametersf44bb5430616205e9f976b9be30d7dd8b397093693b51ed9ec27a4918b7830a9ImageNameEF038FCC"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "@sha256:",
+                  {
+                    "Fn::Select": [
+                      1,
+                      {
+                        "Fn::Split": [
+                          "@sha256:",
+                          {
+                            "Ref": "AssetParametersf44bb5430616205e9f976b9be30d7dd8b397093693b51ed9ec27a4918b7830a9ImageNameEF038FCC"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              ]
+            },
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "ecscolorteller95A3B0F7"
+                },
+                "awslogs-stream-prefix": "white",
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                }
+              }
+            },
+            "Name": "white",
+            "PortMappings": [
+              {
+                "ContainerPort": 9080,
+                "Protocol": "tcp"
+              }
+            ]
+          },
+          {
+            "Essential": true,
+            "Image": "amazon/aws-xray-daemon",
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "ecscolorteller95A3B0F7"
+                },
+                "awslogs-stream-prefix": "white",
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                }
+              }
+            },
+            "Name": "xray",
+            "PortMappings": [
+              {
+                "ContainerPort": 2000,
+                "Protocol": "udp"
+              }
+            ]
+          }
+        ],
+        "Cpu": "256",
+        "ExecutionRoleArn": {
+          "Fn::GetAtt": [
+            "executionroleD9A39BE6",
+            "Arn"
+          ]
+        },
+        "Family": "white",
+        "Memory": "512",
+        "NetworkMode": "awsvpc",
+        "ProxyConfiguration": {
+          "ContainerName": "envoy",
+          "ProxyConfigurationProperties": [
+            {
+              "Name": "AppPorts",
+              "Value": "9080"
+            },
+            {
+              "Name": "ProxyEgressPort",
+              "Value": "15001"
+            },
+            {
+              "Name": "ProxyIngressPort",
+              "Value": "15000"
+            },
+            {
+              "Name": "EgressIgnoredIPs",
+              "Value": "169.254.170.2,169.254.169.254"
+            },
+            {
+              "Name": "IgnoredUID",
+              "Value": "1337"
+            }
+          ],
+          "Type": "APPMESH"
+        },
+        "RequiresCompatibilities": [
+          "FARGATE"
+        ],
+        "TaskRoleArn": {
+          "Fn::GetAtt": [
+            "taskrole5938D619",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/white-task/Resource"
+      }
+    },
+    "whitetaskwhiteAssetImageAdoptRepository7347D5EA": {
+      "Type": "Custom::ECRAdoptedRepository",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62c52BE89E9",
+            "Arn"
+          ]
+        },
+        "RepositoryName": {
+          "Fn::Select": [
+            0,
+            {
+              "Fn::Split": [
+                "@sha256:",
+                {
+                  "Ref": "AssetParametersf44bb5430616205e9f976b9be30d7dd8b397093693b51ed9ec27a4918b7830a9ImageNameEF038FCC"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "DependsOn": [
+        "AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62cServiceRoleDefaultPolicy6BC8737C",
+        "AdoptEcrRepositorydbc60defc59544bcaa5c28c95d68f62cServiceRoleD788AA17"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/white-task/white/AssetImage/AdoptRepository/Resource/Default"
+      }
+    },
+    "tcpechotasks62ED6AD8": {
+      "Type": "AWS::ECS::TaskDefinition",
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Environment": [
+              {
+                "Name": "TCP_PORT",
+                "Value": "2701"
+              },
+              {
+                "Name": "NODE_NAME",
+                "Value": "mesh/ColorTellerAppMesh/virtualNode/echo"
+              }
+            ],
+            "Essential": true,
+            "Image": "cjimti/go-echo",
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "ecscolorteller95A3B0F7"
+                },
+                "awslogs-stream-prefix": "tcpecho",
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                }
+              }
+            },
+            "Name": "tcpecho",
+            "PortMappings": [
+              {
+                "ContainerPort": 2701,
+                "Protocol": "tcp"
+              }
+            ]
+          }
+        ],
+        "Cpu": "256",
+        "ExecutionRoleArn": {
+          "Fn::GetAtt": [
+            "executionroleD9A39BE6",
+            "Arn"
+          ]
+        },
+        "Family": "tcpecho",
+        "Memory": "512",
+        "NetworkMode": "awsvpc",
+        "RequiresCompatibilities": [
+          "FARGATE"
+        ],
+        "TaskRoleArn": {
+          "Fn::GetAtt": [
+            "taskrole5938D619",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/tcpecho-tasks/Resource"
+      }
+    },
+    "gatewayServiceAF444E74": {
+      "Type": "AWS::ECS::Service",
+      "Properties": {
+        "Cluster": {
+          "Ref": "fargateserviceautoscalingD107CF93"
+        },
+        "DeploymentConfiguration": {
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 50
+        },
+        "DesiredCount": 2,
+        "EnableECSManagedTags": false,
+        "HealthCheckGracePeriodSeconds": 60,
+        "LaunchType": "FARGATE",
+        "LoadBalancers": [
+          {
+            "ContainerName": "gateway",
+            "ContainerPort": 9080,
+            "TargetGroupArn": {
+              "Ref": "lbPublicListenergatewayGroupBC538380"
+            }
+          }
+        ],
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "AssignPublicIp": "DISABLED",
+            "SecurityGroups": [
+              {
+                "Fn::GetAtt": [
+                  "gatewaySecurityGroupE4FCFFA7",
+                  "GroupId"
+                ]
+              }
+            ],
+            "Subnets": [
+              {
+                "Fn::ImportValue": "colorteller-network:ExportsOutputRefcolortellervpcPrivateSubnet1Subnet4AE824668015203D"
+              },
+              {
+                "Fn::ImportValue": "colorteller-network:ExportsOutputRefcolortellervpcPrivateSubnet2Subnet2722E5E51EBB51DE"
+              }
+            ]
+          }
+        },
+        "ServiceRegistries": [
+          {
+            "RegistryArn": {
+              "Fn::GetAtt": [
+                "gatewayCloudmapService60AAAFE8",
+                "Arn"
+              ]
+            }
+          }
+        ],
+        "TaskDefinition": {
+          "Ref": "gatewaytask977F917F"
+        }
+      },
+      "DependsOn": [
+        "lbPublicListenergatewayGroupBC538380",
+        "lbPublicListenerF908E7B2"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/gateway/Service"
+      }
+    },
+    "gatewayCloudmapService60AAAFE8": {
+      "Type": "AWS::ServiceDiscovery::Service",
+      "Properties": {
+        "DnsConfig": {
+          "DnsRecords": [
+            {
+              "TTL": 60,
+              "Type": "A"
+            }
+          ],
+          "NamespaceId": {
+            "Fn::GetAtt": [
+              "fargateserviceautoscalingDefaultServiceDiscoveryNamespaceDF6E9E27",
+              "Id"
+            ]
+          },
+          "RoutingPolicy": "MULTIVALUE"
+        },
+        "HealthCheckCustomConfig": {
+          "FailureThreshold": 1
+        },
+        "Name": "gateway",
+        "NamespaceId": {
+          "Fn::GetAtt": [
+            "fargateserviceautoscalingDefaultServiceDiscoveryNamespaceDF6E9E27",
+            "Id"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/gateway/CloudmapService/Resource"
+      }
+    },
+    "gatewaySecurityGroupE4FCFFA7": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "colorteller-app-service/gateway/SecurityGroup",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1"
+          }
+        ],
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": {
+              "Fn::ImportValue": "colorteller-network:ExportsOutputFnGetAttcolortellervpcA3932739CidrBlock3CB0FAC1"
+            },
+            "Description": "Allow http inbound from VPC",
+            "FromPort": 9080,
+            "IpProtocol": "tcp",
+            "ToPort": 9080
+          }
+        ],
+        "VpcId": {
+          "Fn::ImportValue": "colorteller-network:ExportsOutputRefcolortellervpcA393273978642635"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/gateway/SecurityGroup/Resource"
+      }
+    },
+    "gatewaySecurityGroupfromcolortellerappservicelbSecurityGroup53BFAEA6908068846C18": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "tcp",
+        "Description": "Load balancer to target",
+        "FromPort": 9080,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "gatewaySecurityGroupE4FCFFA7",
+            "GroupId"
+          ]
+        },
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "lbSecurityGroup47B6F855",
+            "GroupId"
+          ]
+        },
+        "ToPort": 9080
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/gateway/SecurityGroup/from colortellerappservicelbSecurityGroup53BFAEA6:9080"
+      }
+    },
+    "gatewayTaskCountTargetC423B471": {
+      "Type": "AWS::ApplicationAutoScaling::ScalableTarget",
+      "Properties": {
+        "MaxCapacity": 2,
+        "MinCapacity": 1,
+        "ResourceId": {
+          "Fn::Join": [
+            "",
+            [
+              "service/",
+              {
+                "Ref": "fargateserviceautoscalingD107CF93"
+              },
+              "/",
+              {
+                "Fn::GetAtt": [
+                  "gatewayServiceAF444E74",
+                  "Name"
+                ]
+              }
+            ]
+          ]
+        },
+        "RoleARN": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":iam::",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":role/aws-service-role/ecs.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_ECSService"
+            ]
+          ]
+        },
+        "ScalableDimension": "ecs:service:DesiredCount",
+        "ServiceNamespace": "ecs"
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/gateway/TaskCount/Target/Resource"
+      }
+    },
+    "gatewayTaskCountTargetCpuScalingC62188A8": {
+      "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
+      "Properties": {
+        "PolicyName": "colortellerappservicegatewayTaskCountTargetCpuScalingF4556ABE",
+        "PolicyType": "TargetTrackingScaling",
+        "ScalingTargetId": {
+          "Ref": "gatewayTaskCountTargetC423B471"
+        },
+        "TargetTrackingScalingPolicyConfiguration": {
+          "PredefinedMetricSpecification": {
+            "PredefinedMetricType": "ECSServiceAverageCPUUtilization"
+          },
+          "ScaleInCooldown": 60,
+          "ScaleOutCooldown": 60,
+          "TargetValue": 50
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/gateway/TaskCount/Target/CpuScaling/Resource"
+      }
+    },
+    "blackService945B618C": {
+      "Type": "AWS::ECS::Service",
+      "Properties": {
+        "Cluster": {
+          "Ref": "fargateserviceautoscalingD107CF93"
+        },
+        "DeploymentConfiguration": {
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 50
+        },
+        "DesiredCount": 2,
+        "EnableECSManagedTags": false,
+        "LaunchType": "FARGATE",
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "AssignPublicIp": "DISABLED",
+            "SecurityGroups": [
+              {
+                "Fn::GetAtt": [
+                  "blackSecurityGroupA9DB0352",
+                  "GroupId"
+                ]
+              }
+            ],
+            "Subnets": [
+              {
+                "Fn::ImportValue": "colorteller-network:ExportsOutputRefcolortellervpcPrivateSubnet1Subnet4AE824668015203D"
+              },
+              {
+                "Fn::ImportValue": "colorteller-network:ExportsOutputRefcolortellervpcPrivateSubnet2Subnet2722E5E51EBB51DE"
+              }
+            ]
+          }
+        },
+        "ServiceRegistries": [
+          {
+            "RegistryArn": {
+              "Fn::GetAtt": [
+                "blackCloudmapServiceB4FF4C1F",
+                "Arn"
+              ]
+            }
+          }
+        ],
+        "TaskDefinition": {
+          "Ref": "blacktaskA43618AA"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/black/Service"
+      }
+    },
+    "blackCloudmapServiceB4FF4C1F": {
+      "Type": "AWS::ServiceDiscovery::Service",
+      "Properties": {
+        "DnsConfig": {
+          "DnsRecords": [
+            {
+              "TTL": 60,
+              "Type": "A"
+            }
+          ],
+          "NamespaceId": {
+            "Fn::GetAtt": [
+              "fargateserviceautoscalingDefaultServiceDiscoveryNamespaceDF6E9E27",
+              "Id"
+            ]
+          },
+          "RoutingPolicy": "MULTIVALUE"
+        },
+        "HealthCheckCustomConfig": {
+          "FailureThreshold": 1
+        },
+        "Name": "black",
+        "NamespaceId": {
+          "Fn::GetAtt": [
+            "fargateserviceautoscalingDefaultServiceDiscoveryNamespaceDF6E9E27",
+            "Id"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/black/CloudmapService/Resource"
+      }
+    },
+    "blackSecurityGroupA9DB0352": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "colorteller-app-service/black/SecurityGroup",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1"
+          }
+        ],
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": {
+              "Fn::ImportValue": "colorteller-network:ExportsOutputFnGetAttcolortellervpcA3932739CidrBlock3CB0FAC1"
+            },
+            "Description": "Allow http inbound from VPC",
+            "FromPort": 9080,
+            "IpProtocol": "tcp",
+            "ToPort": 9080
+          }
+        ],
+        "VpcId": {
+          "Fn::ImportValue": "colorteller-network:ExportsOutputRefcolortellervpcA393273978642635"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/black/SecurityGroup/Resource"
+      }
+    },
+    "blackTaskCountTargetA22BEFC7": {
+      "Type": "AWS::ApplicationAutoScaling::ScalableTarget",
+      "Properties": {
+        "MaxCapacity": 2,
+        "MinCapacity": 1,
+        "ResourceId": {
+          "Fn::Join": [
+            "",
+            [
+              "service/",
+              {
+                "Ref": "fargateserviceautoscalingD107CF93"
+              },
+              "/",
+              {
+                "Fn::GetAtt": [
+                  "blackService945B618C",
+                  "Name"
+                ]
+              }
+            ]
+          ]
+        },
+        "RoleARN": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":iam::",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":role/aws-service-role/ecs.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_ECSService"
+            ]
+          ]
+        },
+        "ScalableDimension": "ecs:service:DesiredCount",
+        "ServiceNamespace": "ecs"
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/black/TaskCount/Target/Resource"
+      }
+    },
+    "blackTaskCountTargetCpuScaling01CDAB50": {
+      "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
+      "Properties": {
+        "PolicyName": "colortellerappserviceblackTaskCountTargetCpuScaling0B975E83",
+        "PolicyType": "TargetTrackingScaling",
+        "ScalingTargetId": {
+          "Ref": "blackTaskCountTargetA22BEFC7"
+        },
+        "TargetTrackingScalingPolicyConfiguration": {
+          "PredefinedMetricSpecification": {
+            "PredefinedMetricType": "ECSServiceAverageCPUUtilization"
+          },
+          "ScaleInCooldown": 60,
+          "ScaleOutCooldown": 60,
+          "TargetValue": 50
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/black/TaskCount/Target/CpuScaling/Resource"
+      }
+    },
+    "blueService40D4400F": {
+      "Type": "AWS::ECS::Service",
+      "Properties": {
+        "Cluster": {
+          "Ref": "fargateserviceautoscalingD107CF93"
+        },
+        "DeploymentConfiguration": {
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 50
+        },
+        "DesiredCount": 2,
+        "EnableECSManagedTags": false,
+        "LaunchType": "FARGATE",
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "AssignPublicIp": "DISABLED",
+            "SecurityGroups": [
+              {
+                "Fn::GetAtt": [
+                  "blueSecurityGroup7C579F0D",
+                  "GroupId"
+                ]
+              }
+            ],
+            "Subnets": [
+              {
+                "Fn::ImportValue": "colorteller-network:ExportsOutputRefcolortellervpcPrivateSubnet1Subnet4AE824668015203D"
+              },
+              {
+                "Fn::ImportValue": "colorteller-network:ExportsOutputRefcolortellervpcPrivateSubnet2Subnet2722E5E51EBB51DE"
+              }
+            ]
+          }
+        },
+        "ServiceRegistries": [
+          {
+            "RegistryArn": {
+              "Fn::GetAtt": [
+                "blueCloudmapService53C6F141",
+                "Arn"
+              ]
+            }
+          }
+        ],
+        "TaskDefinition": {
+          "Ref": "bluetaskF8D729FD"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/blue/Service"
+      }
+    },
+    "blueCloudmapService53C6F141": {
+      "Type": "AWS::ServiceDiscovery::Service",
+      "Properties": {
+        "DnsConfig": {
+          "DnsRecords": [
+            {
+              "TTL": 60,
+              "Type": "A"
+            }
+          ],
+          "NamespaceId": {
+            "Fn::GetAtt": [
+              "fargateserviceautoscalingDefaultServiceDiscoveryNamespaceDF6E9E27",
+              "Id"
+            ]
+          },
+          "RoutingPolicy": "MULTIVALUE"
+        },
+        "HealthCheckCustomConfig": {
+          "FailureThreshold": 1
+        },
+        "Name": "blue",
+        "NamespaceId": {
+          "Fn::GetAtt": [
+            "fargateserviceautoscalingDefaultServiceDiscoveryNamespaceDF6E9E27",
+            "Id"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/blue/CloudmapService/Resource"
+      }
+    },
+    "blueSecurityGroup7C579F0D": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "colorteller-app-service/blue/SecurityGroup",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1"
+          }
+        ],
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": {
+              "Fn::ImportValue": "colorteller-network:ExportsOutputFnGetAttcolortellervpcA3932739CidrBlock3CB0FAC1"
+            },
+            "Description": "Allow http inbound from VPC",
+            "FromPort": 9080,
+            "IpProtocol": "tcp",
+            "ToPort": 9080
+          }
+        ],
+        "VpcId": {
+          "Fn::ImportValue": "colorteller-network:ExportsOutputRefcolortellervpcA393273978642635"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/blue/SecurityGroup/Resource"
+      }
+    },
+    "blueTaskCountTargetFE608C04": {
+      "Type": "AWS::ApplicationAutoScaling::ScalableTarget",
+      "Properties": {
+        "MaxCapacity": 2,
+        "MinCapacity": 1,
+        "ResourceId": {
+          "Fn::Join": [
+            "",
+            [
+              "service/",
+              {
+                "Ref": "fargateserviceautoscalingD107CF93"
+              },
+              "/",
+              {
+                "Fn::GetAtt": [
+                  "blueService40D4400F",
+                  "Name"
+                ]
+              }
+            ]
+          ]
+        },
+        "RoleARN": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":iam::",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":role/aws-service-role/ecs.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_ECSService"
+            ]
+          ]
+        },
+        "ScalableDimension": "ecs:service:DesiredCount",
+        "ServiceNamespace": "ecs"
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/blue/TaskCount/Target/Resource"
+      }
+    },
+    "blueTaskCountTargetCpuScalingC8768030": {
+      "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
+      "Properties": {
+        "PolicyName": "colortellerappserviceblueTaskCountTargetCpuScalingE6AEFC6A",
+        "PolicyType": "TargetTrackingScaling",
+        "ScalingTargetId": {
+          "Ref": "blueTaskCountTargetFE608C04"
+        },
+        "TargetTrackingScalingPolicyConfiguration": {
+          "PredefinedMetricSpecification": {
+            "PredefinedMetricType": "ECSServiceAverageCPUUtilization"
+          },
+          "ScaleInCooldown": 60,
+          "ScaleOutCooldown": 60,
+          "TargetValue": 50
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/blue/TaskCount/Target/CpuScaling/Resource"
+      }
+    },
+    "redServiceCD09A173": {
+      "Type": "AWS::ECS::Service",
+      "Properties": {
+        "Cluster": {
+          "Ref": "fargateserviceautoscalingD107CF93"
+        },
+        "DeploymentConfiguration": {
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 50
+        },
+        "DesiredCount": 2,
+        "EnableECSManagedTags": false,
+        "LaunchType": "FARGATE",
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "AssignPublicIp": "DISABLED",
+            "SecurityGroups": [
+              {
+                "Fn::GetAtt": [
+                  "redSecurityGroupC601049D",
+                  "GroupId"
+                ]
+              }
+            ],
+            "Subnets": [
+              {
+                "Fn::ImportValue": "colorteller-network:ExportsOutputRefcolortellervpcPrivateSubnet1Subnet4AE824668015203D"
+              },
+              {
+                "Fn::ImportValue": "colorteller-network:ExportsOutputRefcolortellervpcPrivateSubnet2Subnet2722E5E51EBB51DE"
+              }
+            ]
+          }
+        },
+        "ServiceRegistries": [
+          {
+            "RegistryArn": {
+              "Fn::GetAtt": [
+                "redCloudmapServiceFDA8B67D",
+                "Arn"
+              ]
+            }
+          }
+        ],
+        "TaskDefinition": {
+          "Ref": "redtaskE70C9D2E"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/red/Service"
+      }
+    },
+    "redCloudmapServiceFDA8B67D": {
+      "Type": "AWS::ServiceDiscovery::Service",
+      "Properties": {
+        "DnsConfig": {
+          "DnsRecords": [
+            {
+              "TTL": 60,
+              "Type": "A"
+            }
+          ],
+          "NamespaceId": {
+            "Fn::GetAtt": [
+              "fargateserviceautoscalingDefaultServiceDiscoveryNamespaceDF6E9E27",
+              "Id"
+            ]
+          },
+          "RoutingPolicy": "MULTIVALUE"
+        },
+        "HealthCheckCustomConfig": {
+          "FailureThreshold": 1
+        },
+        "Name": "red",
+        "NamespaceId": {
+          "Fn::GetAtt": [
+            "fargateserviceautoscalingDefaultServiceDiscoveryNamespaceDF6E9E27",
+            "Id"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/red/CloudmapService/Resource"
+      }
+    },
+    "redSecurityGroupC601049D": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "colorteller-app-service/red/SecurityGroup",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1"
+          }
+        ],
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": {
+              "Fn::ImportValue": "colorteller-network:ExportsOutputFnGetAttcolortellervpcA3932739CidrBlock3CB0FAC1"
+            },
+            "Description": "Allow http inbound from VPC",
+            "FromPort": 9080,
+            "IpProtocol": "tcp",
+            "ToPort": 9080
+          }
+        ],
+        "VpcId": {
+          "Fn::ImportValue": "colorteller-network:ExportsOutputRefcolortellervpcA393273978642635"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/red/SecurityGroup/Resource"
+      }
+    },
+    "redTaskCountTarget3EEFA3FC": {
+      "Type": "AWS::ApplicationAutoScaling::ScalableTarget",
+      "Properties": {
+        "MaxCapacity": 2,
+        "MinCapacity": 1,
+        "ResourceId": {
+          "Fn::Join": [
+            "",
+            [
+              "service/",
+              {
+                "Ref": "fargateserviceautoscalingD107CF93"
+              },
+              "/",
+              {
+                "Fn::GetAtt": [
+                  "redServiceCD09A173",
+                  "Name"
+                ]
+              }
+            ]
+          ]
+        },
+        "RoleARN": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":iam::",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":role/aws-service-role/ecs.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_ECSService"
+            ]
+          ]
+        },
+        "ScalableDimension": "ecs:service:DesiredCount",
+        "ServiceNamespace": "ecs"
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/red/TaskCount/Target/Resource"
+      }
+    },
+    "redTaskCountTargetCpuScalingA8E0F28A": {
+      "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
+      "Properties": {
+        "PolicyName": "colortellerappserviceredTaskCountTargetCpuScalingF7E69643",
+        "PolicyType": "TargetTrackingScaling",
+        "ScalingTargetId": {
+          "Ref": "redTaskCountTarget3EEFA3FC"
+        },
+        "TargetTrackingScalingPolicyConfiguration": {
+          "PredefinedMetricSpecification": {
+            "PredefinedMetricType": "ECSServiceAverageCPUUtilization"
+          },
+          "ScaleInCooldown": 60,
+          "ScaleOutCooldown": 60,
+          "TargetValue": 50
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/red/TaskCount/Target/CpuScaling/Resource"
+      }
+    },
+    "whiteService306AD990": {
+      "Type": "AWS::ECS::Service",
+      "Properties": {
+        "Cluster": {
+          "Ref": "fargateserviceautoscalingD107CF93"
+        },
+        "DeploymentConfiguration": {
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 50
+        },
+        "DesiredCount": 2,
+        "EnableECSManagedTags": false,
+        "LaunchType": "FARGATE",
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "AssignPublicIp": "DISABLED",
+            "SecurityGroups": [
+              {
+                "Fn::GetAtt": [
+                  "whiteSecurityGroup18B39C67",
+                  "GroupId"
+                ]
+              }
+            ],
+            "Subnets": [
+              {
+                "Fn::ImportValue": "colorteller-network:ExportsOutputRefcolortellervpcPrivateSubnet1Subnet4AE824668015203D"
+              },
+              {
+                "Fn::ImportValue": "colorteller-network:ExportsOutputRefcolortellervpcPrivateSubnet2Subnet2722E5E51EBB51DE"
+              }
+            ]
+          }
+        },
+        "ServiceRegistries": [
+          {
+            "RegistryArn": {
+              "Fn::GetAtt": [
+                "whiteCloudmapService45564BE0",
+                "Arn"
+              ]
+            }
+          }
+        ],
+        "TaskDefinition": {
+          "Ref": "whitetask6B6C2B2A"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/white/Service"
+      }
+    },
+    "whiteCloudmapService45564BE0": {
+      "Type": "AWS::ServiceDiscovery::Service",
+      "Properties": {
+        "DnsConfig": {
+          "DnsRecords": [
+            {
+              "TTL": 60,
+              "Type": "A"
+            }
+          ],
+          "NamespaceId": {
+            "Fn::GetAtt": [
+              "fargateserviceautoscalingDefaultServiceDiscoveryNamespaceDF6E9E27",
+              "Id"
+            ]
+          },
+          "RoutingPolicy": "MULTIVALUE"
+        },
+        "HealthCheckCustomConfig": {
+          "FailureThreshold": 1
+        },
+        "Name": "colorteller",
+        "NamespaceId": {
+          "Fn::GetAtt": [
+            "fargateserviceautoscalingDefaultServiceDiscoveryNamespaceDF6E9E27",
+            "Id"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/white/CloudmapService/Resource"
+      }
+    },
+    "whiteSecurityGroup18B39C67": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "colorteller-app-service/white/SecurityGroup",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1"
+          }
+        ],
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": {
+              "Fn::ImportValue": "colorteller-network:ExportsOutputFnGetAttcolortellervpcA3932739CidrBlock3CB0FAC1"
+            },
+            "Description": "Allow http inbound from VPC",
+            "FromPort": 9080,
+            "IpProtocol": "tcp",
+            "ToPort": 9080
+          }
+        ],
+        "VpcId": {
+          "Fn::ImportValue": "colorteller-network:ExportsOutputRefcolortellervpcA393273978642635"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/white/SecurityGroup/Resource"
+      }
+    },
+    "whiteTaskCountTarget6F9A53BD": {
+      "Type": "AWS::ApplicationAutoScaling::ScalableTarget",
+      "Properties": {
+        "MaxCapacity": 2,
+        "MinCapacity": 1,
+        "ResourceId": {
+          "Fn::Join": [
+            "",
+            [
+              "service/",
+              {
+                "Ref": "fargateserviceautoscalingD107CF93"
+              },
+              "/",
+              {
+                "Fn::GetAtt": [
+                  "whiteService306AD990",
+                  "Name"
+                ]
+              }
+            ]
+          ]
+        },
+        "RoleARN": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":iam::",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":role/aws-service-role/ecs.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_ECSService"
+            ]
+          ]
+        },
+        "ScalableDimension": "ecs:service:DesiredCount",
+        "ServiceNamespace": "ecs"
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/white/TaskCount/Target/Resource"
+      }
+    },
+    "whiteTaskCountTargetCpuScaling7B1F4609": {
+      "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
+      "Properties": {
+        "PolicyName": "colortellerappservicewhiteTaskCountTargetCpuScaling3511D961",
+        "PolicyType": "TargetTrackingScaling",
+        "ScalingTargetId": {
+          "Ref": "whiteTaskCountTarget6F9A53BD"
+        },
+        "TargetTrackingScalingPolicyConfiguration": {
+          "PredefinedMetricSpecification": {
+            "PredefinedMetricType": "ECSServiceAverageCPUUtilization"
+          },
+          "ScaleInCooldown": 60,
+          "ScaleOutCooldown": 60,
+          "TargetValue": 50
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/white/TaskCount/Target/CpuScaling/Resource"
+      }
+    },
+    "tcpechoServiceE76E9129": {
+      "Type": "AWS::ECS::Service",
+      "Properties": {
+        "Cluster": {
+          "Ref": "fargateserviceautoscalingD107CF93"
+        },
+        "DeploymentConfiguration": {
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 50
+        },
+        "DesiredCount": 2,
+        "EnableECSManagedTags": false,
+        "HealthCheckGracePeriodSeconds": 60,
+        "LaunchType": "FARGATE",
+        "LoadBalancers": [
+          {
+            "ContainerName": "tcpecho",
+            "ContainerPort": 2701,
+            "TargetGroupArn": {
+              "Ref": "lbPublicListenergatewayGroupBC538380"
+            }
+          }
+        ],
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "AssignPublicIp": "DISABLED",
+            "SecurityGroups": [
+              {
+                "Fn::GetAtt": [
+                  "tcpechoSecurityGroupFBA1D811",
+                  "GroupId"
+                ]
+              }
+            ],
+            "Subnets": [
+              {
+                "Fn::ImportValue": "colorteller-network:ExportsOutputRefcolortellervpcPrivateSubnet1Subnet4AE824668015203D"
+              },
+              {
+                "Fn::ImportValue": "colorteller-network:ExportsOutputRefcolortellervpcPrivateSubnet2Subnet2722E5E51EBB51DE"
+              }
+            ]
+          }
+        },
+        "ServiceRegistries": [
+          {
+            "RegistryArn": {
+              "Fn::GetAtt": [
+                "tcpechoCloudmapServiceAFB081F4",
+                "Arn"
+              ]
+            }
+          }
+        ],
+        "TaskDefinition": {
+          "Ref": "tcpechotasks62ED6AD8"
+        }
+      },
+      "DependsOn": [
+        "lbPublicListenergatewayGroupBC538380",
+        "lbPublicListenerF908E7B2"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/tcpecho/Service"
+      }
+    },
+    "tcpechoCloudmapServiceAFB081F4": {
+      "Type": "AWS::ServiceDiscovery::Service",
+      "Properties": {
+        "DnsConfig": {
+          "DnsRecords": [
+            {
+              "TTL": 60,
+              "Type": "A"
+            }
+          ],
+          "NamespaceId": {
+            "Fn::GetAtt": [
+              "fargateserviceautoscalingDefaultServiceDiscoveryNamespaceDF6E9E27",
+              "Id"
+            ]
+          },
+          "RoutingPolicy": "MULTIVALUE"
+        },
+        "HealthCheckCustomConfig": {
+          "FailureThreshold": 1
+        },
+        "Name": "tcpecho",
+        "NamespaceId": {
+          "Fn::GetAtt": [
+            "fargateserviceautoscalingDefaultServiceDiscoveryNamespaceDF6E9E27",
+            "Id"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/tcpecho/CloudmapService/Resource"
+      }
+    },
+    "tcpechoSecurityGroupFBA1D811": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "colorteller-app-service/tcpecho/SecurityGroup",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1"
+          }
+        ],
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": {
+              "Fn::ImportValue": "colorteller-network:ExportsOutputFnGetAttcolortellervpcA3932739CidrBlock3CB0FAC1"
+            },
+            "Description": "Allow http inbound from VPC",
+            "FromPort": 2701,
+            "IpProtocol": "tcp",
+            "ToPort": 2701
+          }
+        ],
+        "VpcId": {
+          "Fn::ImportValue": "colorteller-network:ExportsOutputRefcolortellervpcA393273978642635"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/tcpecho/SecurityGroup/Resource"
+      }
+    },
+    "tcpechoSecurityGroupfromcolortellerappservicelbSecurityGroup53BFAEA6270157C04A36": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "tcp",
+        "Description": "Load balancer to target",
+        "FromPort": 2701,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "tcpechoSecurityGroupFBA1D811",
+            "GroupId"
+          ]
+        },
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "lbSecurityGroup47B6F855",
+            "GroupId"
+          ]
+        },
+        "ToPort": 2701
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/tcpecho/SecurityGroup/from colortellerappservicelbSecurityGroup53BFAEA6:2701"
+      }
+    },
+    "tcpechoTaskCountTarget7D8B66D9": {
+      "Type": "AWS::ApplicationAutoScaling::ScalableTarget",
+      "Properties": {
+        "MaxCapacity": 2,
+        "MinCapacity": 1,
+        "ResourceId": {
+          "Fn::Join": [
+            "",
+            [
+              "service/",
+              {
+                "Ref": "fargateserviceautoscalingD107CF93"
+              },
+              "/",
+              {
+                "Fn::GetAtt": [
+                  "tcpechoServiceE76E9129",
+                  "Name"
+                ]
+              }
+            ]
+          ]
+        },
+        "RoleARN": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":iam::",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":role/aws-service-role/ecs.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_ECSService"
+            ]
+          ]
+        },
+        "ScalableDimension": "ecs:service:DesiredCount",
+        "ServiceNamespace": "ecs"
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/tcpecho/TaskCount/Target/Resource"
+      }
+    },
+    "tcpechoTaskCountTargetCpuScaling11786A35": {
+      "Type": "AWS::ApplicationAutoScaling::ScalingPolicy",
+      "Properties": {
+        "PolicyName": "colortellerappservicetcpechoTaskCountTargetCpuScaling64FA25A2",
+        "PolicyType": "TargetTrackingScaling",
+        "ScalingTargetId": {
+          "Ref": "tcpechoTaskCountTarget7D8B66D9"
+        },
+        "TargetTrackingScalingPolicyConfiguration": {
+          "PredefinedMetricSpecification": {
+            "PredefinedMetricType": "ECSServiceAverageCPUUtilization"
+          },
+          "ScaleInCooldown": 60,
+          "ScaleOutCooldown": 60,
+          "TargetValue": 50
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/tcpecho/TaskCount/Target/CpuScaling/Resource"
+      }
+    },
+    "lbA35910C5": {
+      "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+      "Properties": {
+        "Scheme": "internet-facing",
+        "SecurityGroups": [
+          {
+            "Fn::GetAtt": [
+              "lbSecurityGroup47B6F855",
+              "GroupId"
+            ]
+          }
+        ],
+        "Subnets": [
+          {
+            "Fn::ImportValue": "colorteller-network:ExportsOutputRefcolortellervpcPublicSubnet1Subnet87371C14EEED662C"
+          },
+          {
+            "Fn::ImportValue": "colorteller-network:ExportsOutputRefcolortellervpcPublicSubnet2SubnetA18F1BEB2D44EAC2"
+          }
+        ],
+        "Type": "application"
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/lb/Resource"
+      }
+    },
+    "lbSecurityGroup47B6F855": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Automatically created Security Group for ELB colortellerappservicelb2287E1AC",
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow from anyone on port 80",
+            "FromPort": 80,
+            "IpProtocol": "tcp",
+            "ToPort": 80
+          }
+        ],
+        "VpcId": {
+          "Fn::ImportValue": "colorteller-network:ExportsOutputRefcolortellervpcA393273978642635"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/lb/SecurityGroup/Resource"
+      }
+    },
+    "lbSecurityGrouptocolortellerappservicegatewaySecurityGroup0A95B1F690807200100B": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "GroupId": {
+          "Fn::GetAtt": [
+            "lbSecurityGroup47B6F855",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "Description": "Load balancer to target",
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
+            "gatewaySecurityGroupE4FCFFA7",
+            "GroupId"
+          ]
+        },
+        "FromPort": 9080,
+        "ToPort": 9080
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/lb/SecurityGroup/to colortellerappservicegatewaySecurityGroup0A95B1F6:9080"
+      }
+    },
+    "lbSecurityGrouptocolortellerappservicetcpechoSecurityGroup17EB0EA72701D8BB0618": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "GroupId": {
+          "Fn::GetAtt": [
+            "lbSecurityGroup47B6F855",
+            "GroupId"
+          ]
+        },
+        "IpProtocol": "tcp",
+        "Description": "Load balancer to target",
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
+            "tcpechoSecurityGroupFBA1D811",
+            "GroupId"
+          ]
+        },
+        "FromPort": 2701,
+        "ToPort": 2701
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/lb/SecurityGroup/to colortellerappservicetcpechoSecurityGroup17EB0EA7:2701"
+      }
+    },
+    "lbPublicListenerF908E7B2": {
+      "Type": "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties": {
+        "DefaultActions": [
+          {
+            "TargetGroupArn": {
+              "Ref": "lbPublicListenergatewayGroupBC538380"
+            },
+            "Type": "forward"
+          }
+        ],
+        "LoadBalancerArn": {
+          "Ref": "lbA35910C5"
+        },
+        "Port": 80,
+        "Protocol": "HTTP"
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/lb/PublicListener/Resource"
+      }
+    },
+    "lbPublicListenergatewayGroupBC538380": {
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties": {
+        "HealthCheckIntervalSeconds": 60,
+        "HealthCheckPath": "/ping",
+        "HealthCheckPort": "9080",
+        "HealthCheckTimeoutSeconds": 5,
+        "Port": 80,
+        "Protocol": "HTTP",
+        "TargetType": "ip",
+        "VpcId": {
+          "Fn::ImportValue": "colorteller-network:ExportsOutputRefcolortellervpcA393273978642635"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-service/lb/PublicListener/gatewayGroup/Resource"
+      }
+    }
+  },
+  "Parameters": {
+    "AssetParameters1ba77edd2a78131f0a85162a8e550a8f1e85c7d3461230d59220cef9aa60c7bfImageNameC66728B3": {
+      "Type": "String",
+      "Description": "ECR repository name and tag for asset \"1ba77edd2a78131f0a85162a8e550a8f1e85c7d3461230d59220cef9aa60c7bf\""
+    },
+    "AssetParametersa65ac4beaa2b5a7b20eebf3b7c5c1c886b71428afa377e02dab0d10ab3be57e7S3Bucket7CBBD48C": {
+      "Type": "String",
+      "Description": "S3 bucket for asset \"a65ac4beaa2b5a7b20eebf3b7c5c1c886b71428afa377e02dab0d10ab3be57e7\""
+    },
+    "AssetParametersa65ac4beaa2b5a7b20eebf3b7c5c1c886b71428afa377e02dab0d10ab3be57e7S3VersionKey87E3D057": {
+      "Type": "String",
+      "Description": "S3 key for asset version \"a65ac4beaa2b5a7b20eebf3b7c5c1c886b71428afa377e02dab0d10ab3be57e7\""
+    },
+    "AssetParametersa65ac4beaa2b5a7b20eebf3b7c5c1c886b71428afa377e02dab0d10ab3be57e7ArtifactHash3E217B68": {
+      "Type": "String",
+      "Description": "Artifact hash for asset \"a65ac4beaa2b5a7b20eebf3b7c5c1c886b71428afa377e02dab0d10ab3be57e7\""
+    },
+    "AssetParametersf44bb5430616205e9f976b9be30d7dd8b397093693b51ed9ec27a4918b7830a9ImageNameEF038FCC": {
+      "Type": "String",
+      "Description": "ECR repository name and tag for asset \"f44bb5430616205e9f976b9be30d7dd8b397093693b51ed9ec27a4918b7830a9\""
+    }
+  },
+  "Outputs": {
+    "LoadBalancerDNS": {
+      "Value": {
+        "Fn::GetAtt": [
+          "lbA35910C5",
+          "DNSName"
+        ]
+      }
+    },
+    "ClusterName": {
+      "Value": {
+        "Ref": "fargateserviceautoscalingD107CF93"
+      }
+    }
+  }
+}

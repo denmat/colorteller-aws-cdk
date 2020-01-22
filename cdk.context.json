@@ -1,0 +1,6 @@
+{
+  "hosted-zone:account=580021798577:domainName=svc.test.local:privateZone=true:region=ap-southeast-2:vpcId=vpc-0fa1ac00599a2c292": {
+    "Id": "/hostedzone/Z0875115R4LSY3Z6SO7W",
+    "Name": "svc.test.local."
+  }
+}

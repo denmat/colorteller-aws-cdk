@@ -1,0 +1,463 @@
+{
+  "Resources": {
+    "colortellerappmesh8996CD80": {
+      "Type": "AWS::AppMesh::Mesh",
+      "Properties": {
+        "MeshName": "ColorTellerAppMesh",
+        "Spec": {
+          "EgressFilter": {
+            "Type": "ALLOW_ALL"
+          }
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-mesh/colorteller-app-mesh/Resource"
+      }
+    },
+    "colortellerblackvn9F389B51": {
+      "Type": "AWS::AppMesh::VirtualNode",
+      "Properties": {
+        "MeshName": {
+          "Fn::GetAtt": [
+            "colortellerappmesh8996CD80",
+            "MeshName"
+          ]
+        },
+        "Spec": {
+          "Listeners": [
+            {
+              "HealthCheck": {
+                "HealthyThreshold": 2,
+                "IntervalMillis": 5000,
+                "Path": "/ping",
+                "Port": 9080,
+                "Protocol": "http",
+                "TimeoutMillis": 2000,
+                "UnhealthyThreshold": 2
+              },
+              "PortMapping": {
+                "Port": 9080,
+                "Protocol": "http"
+              }
+            }
+          ],
+          "Logging": {
+            "AccessLog": {
+              "File": {
+                "Path": "/dev/stdout"
+              }
+            }
+          },
+          "ServiceDiscovery": {
+            "DNS": {
+              "Hostname": "black.svc.test.local"
+            }
+          }
+        },
+        "VirtualNodeName": "black"
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-mesh/colorteller-black-vn/Resource"
+      }
+    },
+    "colortellerbluevnD8D97407": {
+      "Type": "AWS::AppMesh::VirtualNode",
+      "Properties": {
+        "MeshName": {
+          "Fn::GetAtt": [
+            "colortellerappmesh8996CD80",
+            "MeshName"
+          ]
+        },
+        "Spec": {
+          "Listeners": [
+            {
+              "HealthCheck": {
+                "HealthyThreshold": 2,
+                "IntervalMillis": 5000,
+                "Path": "/ping",
+                "Port": 9080,
+                "Protocol": "http",
+                "TimeoutMillis": 2000,
+                "UnhealthyThreshold": 2
+              },
+              "PortMapping": {
+                "Port": 9080,
+                "Protocol": "http"
+              }
+            }
+          ],
+          "Logging": {
+            "AccessLog": {
+              "File": {
+                "Path": "/dev/stdout"
+              }
+            }
+          },
+          "ServiceDiscovery": {
+            "DNS": {
+              "Hostname": "blue.svc.test.local"
+            }
+          }
+        },
+        "VirtualNodeName": "blue"
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-mesh/colorteller-blue-vn/Resource"
+      }
+    },
+    "colortellerredvnCE8A2598": {
+      "Type": "AWS::AppMesh::VirtualNode",
+      "Properties": {
+        "MeshName": {
+          "Fn::GetAtt": [
+            "colortellerappmesh8996CD80",
+            "MeshName"
+          ]
+        },
+        "Spec": {
+          "Listeners": [
+            {
+              "HealthCheck": {
+                "HealthyThreshold": 2,
+                "IntervalMillis": 5000,
+                "Path": "/ping",
+                "Port": 9080,
+                "Protocol": "http",
+                "TimeoutMillis": 2000,
+                "UnhealthyThreshold": 2
+              },
+              "PortMapping": {
+                "Port": 9080,
+                "Protocol": "http"
+              }
+            }
+          ],
+          "Logging": {
+            "AccessLog": {
+              "File": {
+                "Path": "/dev/stdout"
+              }
+            }
+          },
+          "ServiceDiscovery": {
+            "DNS": {
+              "Hostname": "red.svc.test.local"
+            }
+          }
+        },
+        "VirtualNodeName": "red"
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-mesh/colorteller-red-vn/Resource"
+      }
+    },
+    "colortellerwhitevn55E4B4E9": {
+      "Type": "AWS::AppMesh::VirtualNode",
+      "Properties": {
+        "MeshName": {
+          "Fn::GetAtt": [
+            "colortellerappmesh8996CD80",
+            "MeshName"
+          ]
+        },
+        "Spec": {
+          "Listeners": [
+            {
+              "HealthCheck": {
+                "HealthyThreshold": 2,
+                "IntervalMillis": 5000,
+                "Path": "/ping",
+                "Port": 9080,
+                "Protocol": "http",
+                "TimeoutMillis": 2000,
+                "UnhealthyThreshold": 2
+              },
+              "PortMapping": {
+                "Port": 9080,
+                "Protocol": "http"
+              }
+            }
+          ],
+          "Logging": {
+            "AccessLog": {
+              "File": {
+                "Path": "/dev/stdout"
+              }
+            }
+          },
+          "ServiceDiscovery": {
+            "DNS": {
+              "Hostname": "white.svc.test.local"
+            }
+          }
+        },
+        "VirtualNodeName": "white"
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-mesh/colorteller-white-vn/Resource"
+      }
+    },
+    "colortellerechovn2CBDD471": {
+      "Type": "AWS::AppMesh::VirtualNode",
+      "Properties": {
+        "MeshName": {
+          "Fn::GetAtt": [
+            "colortellerappmesh8996CD80",
+            "MeshName"
+          ]
+        },
+        "Spec": {
+          "Listeners": [
+            {
+              "HealthCheck": {
+                "HealthyThreshold": 2,
+                "IntervalMillis": 5000,
+                "Path": "/ping",
+                "Port": 2701,
+                "Protocol": "http",
+                "TimeoutMillis": 2000,
+                "UnhealthyThreshold": 2
+              },
+              "PortMapping": {
+                "Port": 2701,
+                "Protocol": "http"
+              }
+            }
+          ],
+          "Logging": {
+            "AccessLog": {
+              "File": {
+                "Path": "/dev/stdout"
+              }
+            }
+          },
+          "ServiceDiscovery": {
+            "DNS": {
+              "Hostname": "tcpecho.svc.test.local"
+            }
+          }
+        },
+        "VirtualNodeName": "echo"
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-mesh/colorteller-echo-vn/Resource"
+      }
+    },
+    "colortellervirtualrouter927EC3B0": {
+      "Type": "AWS::AppMesh::VirtualRouter",
+      "Properties": {
+        "MeshName": {
+          "Fn::GetAtt": [
+            "colortellerappmesh8996CD80",
+            "MeshName"
+          ]
+        },
+        "Spec": {
+          "Listeners": [
+            {
+              "PortMapping": {
+                "Port": 9080,
+                "Protocol": "http"
+              }
+            }
+          ]
+        },
+        "VirtualRouterName": "colorteller-rtr"
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-mesh/colorteller-virtual-router/Resource"
+      }
+    },
+    "colortellervirtualroutercolortellerrouteEC542528": {
+      "Type": "AWS::AppMesh::Route",
+      "Properties": {
+        "MeshName": {
+          "Fn::GetAtt": [
+            "colortellerappmesh8996CD80",
+            "MeshName"
+          ]
+        },
+        "RouteName": "colorteller-route",
+        "Spec": {
+          "HttpRoute": {
+            "Action": {
+              "WeightedTargets": [
+                {
+                  "VirtualNode": {
+                    "Fn::GetAtt": [
+                      "colortellerblackvn9F389B51",
+                      "VirtualNodeName"
+                    ]
+                  },
+                  "Weight": 1
+                },
+                {
+                  "VirtualNode": {
+                    "Fn::GetAtt": [
+                      "colortellerbluevnD8D97407",
+                      "VirtualNodeName"
+                    ]
+                  },
+                  "Weight": 1
+                },
+                {
+                  "VirtualNode": {
+                    "Fn::GetAtt": [
+                      "colortellerredvnCE8A2598",
+                      "VirtualNodeName"
+                    ]
+                  },
+                  "Weight": 1
+                },
+                {
+                  "VirtualNode": {
+                    "Fn::GetAtt": [
+                      "colortellerwhitevn55E4B4E9",
+                      "VirtualNodeName"
+                    ]
+                  },
+                  "Weight": 1
+                }
+              ]
+            },
+            "Match": {
+              "Prefix": "/"
+            }
+          }
+        },
+        "VirtualRouterName": {
+          "Fn::GetAtt": [
+            "colortellervirtualrouter927EC3B0",
+            "VirtualRouterName"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-mesh/colorteller-virtual-router/colorteller-route/Resource"
+      }
+    },
+    "colortellervirtualservice6CD78685": {
+      "Type": "AWS::AppMesh::VirtualService",
+      "Properties": {
+        "MeshName": {
+          "Fn::GetAtt": [
+            "colortellerappmesh8996CD80",
+            "MeshName"
+          ]
+        },
+        "Spec": {
+          "Provider": {
+            "VirtualRouter": {
+              "VirtualRouterName": {
+                "Fn::GetAtt": [
+                  "colortellervirtualrouter927EC3B0",
+                  "VirtualRouterName"
+                ]
+              }
+            }
+          }
+        },
+        "VirtualServiceName": "colorteller.svc.test.local"
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-mesh/colorteller-virtual-service/Resource"
+      }
+    },
+    "colortellerechovirtualserviceD3C71A06": {
+      "Type": "AWS::AppMesh::VirtualService",
+      "Properties": {
+        "MeshName": {
+          "Fn::GetAtt": [
+            "colortellerappmesh8996CD80",
+            "MeshName"
+          ]
+        },
+        "Spec": {
+          "Provider": {
+            "VirtualNode": {
+              "VirtualNodeName": {
+                "Fn::GetAtt": [
+                  "colortellerechovn2CBDD471",
+                  "VirtualNodeName"
+                ]
+              }
+            }
+          }
+        },
+        "VirtualServiceName": "tcpecho.svc.test.local"
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-mesh/colorteller-echo-virtual-service/Resource"
+      }
+    },
+    "colortellergatewayvn22F8E803": {
+      "Type": "AWS::AppMesh::VirtualNode",
+      "Properties": {
+        "MeshName": {
+          "Fn::GetAtt": [
+            "colortellerappmesh8996CD80",
+            "MeshName"
+          ]
+        },
+        "Spec": {
+          "Backends": [
+            {
+              "VirtualService": {
+                "VirtualServiceName": {
+                  "Fn::GetAtt": [
+                    "colortellervirtualservice6CD78685",
+                    "VirtualServiceName"
+                  ]
+                }
+              }
+            },
+            {
+              "VirtualService": {
+                "VirtualServiceName": {
+                  "Fn::GetAtt": [
+                    "colortellerechovirtualserviceD3C71A06",
+                    "VirtualServiceName"
+                  ]
+                }
+              }
+            }
+          ],
+          "Listeners": [
+            {
+              "HealthCheck": {
+                "HealthyThreshold": 2,
+                "IntervalMillis": 5000,
+                "Path": "/ping",
+                "Port": 9080,
+                "Protocol": "http",
+                "TimeoutMillis": 2000,
+                "UnhealthyThreshold": 2
+              },
+              "PortMapping": {
+                "Port": 9080,
+                "Protocol": "http"
+              }
+            }
+          ],
+          "Logging": {
+            "AccessLog": {
+              "File": {
+                "Path": "/dev/stdout"
+              }
+            }
+          },
+          "ServiceDiscovery": {
+            "DNS": {
+              "Hostname": "gateway.svc.test.local"
+            }
+          }
+        },
+        "VirtualNodeName": "gateway"
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-app-mesh/colorteller-gateway-vn/Resource"
+      }
+    }
+  }
+}

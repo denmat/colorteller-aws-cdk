@@ -1,0 +1,6 @@
+pyyaml
+aws-cdk.core
+aws-cdk.aws_ec2
+aws-cdk.aws_appmesh
+aws-cdk.aws_ecs
+aws-cdk.aws_elasticloadbalancingv2

@@ -1,0 +1,603 @@
+{
+  "Resources": {
+    "colortellervpcA3932739": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "10.0.0.0/16",
+        "EnableDnsHostnames": true,
+        "EnableDnsSupport": true,
+        "InstanceTenancy": "default",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "colorteller-network/colorteller-vpc"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-network/colorteller-vpc/Resource"
+      }
+    },
+    "colortellervpcPublicSubnet1Subnet87371C14": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.0.0/18",
+        "VpcId": {
+          "Ref": "colortellervpcA3932739"
+        },
+        "AvailabilityZone": {
+          "Fn::Select": [
+            0,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "MapPublicIpOnLaunch": true,
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "colorteller-network/colorteller-vpc/PublicSubnet1"
+          },
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Public"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-network/colorteller-vpc/PublicSubnet1/Subnet"
+      }
+    },
+    "colortellervpcPublicSubnet1RouteTableAD50ECF6": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "colortellervpcA3932739"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "colorteller-network/colorteller-vpc/PublicSubnet1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-network/colorteller-vpc/PublicSubnet1/RouteTable"
+      }
+    },
+    "colortellervpcPublicSubnet1RouteTableAssociationA946C1ED": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "colortellervpcPublicSubnet1RouteTableAD50ECF6"
+        },
+        "SubnetId": {
+          "Ref": "colortellervpcPublicSubnet1Subnet87371C14"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-network/colorteller-vpc/PublicSubnet1/RouteTableAssociation"
+      }
+    },
+    "colortellervpcPublicSubnet1DefaultRouteD0590E28": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "colortellervpcPublicSubnet1RouteTableAD50ECF6"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "colortellervpcIGW7B6E0553"
+        }
+      },
+      "DependsOn": [
+        "colortellervpcVPCGWCF85C669"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "colorteller-network/colorteller-vpc/PublicSubnet1/DefaultRoute"
+      }
+    },
+    "colortellervpcPublicSubnet1EIP38850BB0": {
+      "Type": "AWS::EC2::EIP",
+      "Properties": {
+        "Domain": "vpc",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "colorteller-network/colorteller-vpc/PublicSubnet1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-network/colorteller-vpc/PublicSubnet1/EIP"
+      }
+    },
+    "colortellervpcPublicSubnet1NATGatewayC06BA278": {
+      "Type": "AWS::EC2::NatGateway",
+      "Properties": {
+        "AllocationId": {
+          "Fn::GetAtt": [
+            "colortellervpcPublicSubnet1EIP38850BB0",
+            "AllocationId"
+          ]
+        },
+        "SubnetId": {
+          "Ref": "colortellervpcPublicSubnet1Subnet87371C14"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "colorteller-network/colorteller-vpc/PublicSubnet1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-network/colorteller-vpc/PublicSubnet1/NATGateway"
+      }
+    },
+    "colortellervpcPublicSubnet2SubnetA18F1BEB": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.64.0/18",
+        "VpcId": {
+          "Ref": "colortellervpcA3932739"
+        },
+        "AvailabilityZone": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "MapPublicIpOnLaunch": true,
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "colorteller-network/colorteller-vpc/PublicSubnet2"
+          },
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Public"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-network/colorteller-vpc/PublicSubnet2/Subnet"
+      }
+    },
+    "colortellervpcPublicSubnet2RouteTableBE19A7D1": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "colortellervpcA3932739"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "colorteller-network/colorteller-vpc/PublicSubnet2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-network/colorteller-vpc/PublicSubnet2/RouteTable"
+      }
+    },
+    "colortellervpcPublicSubnet2RouteTableAssociation507AD023": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "colortellervpcPublicSubnet2RouteTableBE19A7D1"
+        },
+        "SubnetId": {
+          "Ref": "colortellervpcPublicSubnet2SubnetA18F1BEB"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-network/colorteller-vpc/PublicSubnet2/RouteTableAssociation"
+      }
+    },
+    "colortellervpcPublicSubnet2DefaultRoute5E004F0A": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "colortellervpcPublicSubnet2RouteTableBE19A7D1"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "colortellervpcIGW7B6E0553"
+        }
+      },
+      "DependsOn": [
+        "colortellervpcVPCGWCF85C669"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "colorteller-network/colorteller-vpc/PublicSubnet2/DefaultRoute"
+      }
+    },
+    "colortellervpcPublicSubnet2EIPFB094D81": {
+      "Type": "AWS::EC2::EIP",
+      "Properties": {
+        "Domain": "vpc",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "colorteller-network/colorteller-vpc/PublicSubnet2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-network/colorteller-vpc/PublicSubnet2/EIP"
+      }
+    },
+    "colortellervpcPublicSubnet2NATGateway28E0FF3B": {
+      "Type": "AWS::EC2::NatGateway",
+      "Properties": {
+        "AllocationId": {
+          "Fn::GetAtt": [
+            "colortellervpcPublicSubnet2EIPFB094D81",
+            "AllocationId"
+          ]
+        },
+        "SubnetId": {
+          "Ref": "colortellervpcPublicSubnet2SubnetA18F1BEB"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "colorteller-network/colorteller-vpc/PublicSubnet2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-network/colorteller-vpc/PublicSubnet2/NATGateway"
+      }
+    },
+    "colortellervpcPrivateSubnet1Subnet4AE82466": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.128.0/18",
+        "VpcId": {
+          "Ref": "colortellervpcA3932739"
+        },
+        "AvailabilityZone": {
+          "Fn::Select": [
+            0,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "MapPublicIpOnLaunch": false,
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "colorteller-network/colorteller-vpc/PrivateSubnet1"
+          },
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Private"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Private"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-network/colorteller-vpc/PrivateSubnet1/Subnet"
+      }
+    },
+    "colortellervpcPrivateSubnet1RouteTable197A15F0": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "colortellervpcA3932739"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "colorteller-network/colorteller-vpc/PrivateSubnet1"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-network/colorteller-vpc/PrivateSubnet1/RouteTable"
+      }
+    },
+    "colortellervpcPrivateSubnet1RouteTableAssociationD38633E9": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "colortellervpcPrivateSubnet1RouteTable197A15F0"
+        },
+        "SubnetId": {
+          "Ref": "colortellervpcPrivateSubnet1Subnet4AE82466"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-network/colorteller-vpc/PrivateSubnet1/RouteTableAssociation"
+      }
+    },
+    "colortellervpcPrivateSubnet1DefaultRouteFE7AA15F": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "colortellervpcPrivateSubnet1RouteTable197A15F0"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": {
+          "Ref": "colortellervpcPublicSubnet1NATGatewayC06BA278"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-network/colorteller-vpc/PrivateSubnet1/DefaultRoute"
+      }
+    },
+    "colortellervpcPrivateSubnet2Subnet2722E5E5": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.192.0/18",
+        "VpcId": {
+          "Ref": "colortellervpcA3932739"
+        },
+        "AvailabilityZone": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "MapPublicIpOnLaunch": false,
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "colorteller-network/colorteller-vpc/PrivateSubnet2"
+          },
+          {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Private"
+          },
+          {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Private"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-network/colorteller-vpc/PrivateSubnet2/Subnet"
+      }
+    },
+    "colortellervpcPrivateSubnet2RouteTable2FB50D89": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "colortellervpcA3932739"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "colorteller-network/colorteller-vpc/PrivateSubnet2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-network/colorteller-vpc/PrivateSubnet2/RouteTable"
+      }
+    },
+    "colortellervpcPrivateSubnet2RouteTableAssociationC08DD1A9": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "colortellervpcPrivateSubnet2RouteTable2FB50D89"
+        },
+        "SubnetId": {
+          "Ref": "colortellervpcPrivateSubnet2Subnet2722E5E5"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-network/colorteller-vpc/PrivateSubnet2/RouteTableAssociation"
+      }
+    },
+    "colortellervpcPrivateSubnet2DefaultRoute54B478F7": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "colortellervpcPrivateSubnet2RouteTable2FB50D89"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": {
+          "Ref": "colortellervpcPublicSubnet2NATGateway28E0FF3B"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-network/colorteller-vpc/PrivateSubnet2/DefaultRoute"
+      }
+    },
+    "colortellervpcIGW7B6E0553": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "colorteller-network/colorteller-vpc"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-network/colorteller-vpc/IGW"
+      }
+    },
+    "colortellervpcVPCGWCF85C669": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": {
+          "Ref": "colortellervpcA3932739"
+        },
+        "InternetGatewayId": {
+          "Ref": "colortellervpcIGW7B6E0553"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-network/colorteller-vpc/VPCGW"
+      }
+    },
+    "colortellervpcECSAgentSecurityGroupE7269F2F": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "colorteller-network/colorteller-vpc/ECS_Agent/SecurityGroup",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1"
+          }
+        ],
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": {
+              "Fn::GetAtt": [
+                "colortellervpcA3932739",
+                "CidrBlock"
+              ]
+            },
+            "Description": {
+              "Fn::Join": [
+                "",
+                [
+                  "from ",
+                  {
+                    "Fn::GetAtt": [
+                      "colortellervpcA3932739",
+                      "CidrBlock"
+                    ]
+                  },
+                  ":443"
+                ]
+              ]
+            },
+            "FromPort": 443,
+            "IpProtocol": "tcp",
+            "ToPort": 443
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "colorteller-network/colorteller-vpc"
+          }
+        ],
+        "VpcId": {
+          "Ref": "colortellervpcA3932739"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-network/colorteller-vpc/ECS_Agent/SecurityGroup/Resource"
+      }
+    },
+    "colortellervpcECSAgentDD8F4F12": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "ServiceName": {
+          "Fn::Join": [
+            "",
+            [
+              "com.amazonaws.",
+              {
+                "Ref": "AWS::Region"
+              },
+              ".ecs-agent"
+            ]
+          ]
+        },
+        "VpcId": {
+          "Ref": "colortellervpcA3932739"
+        },
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "colortellervpcECSAgentSecurityGroupE7269F2F",
+              "GroupId"
+            ]
+          }
+        ],
+        "SubnetIds": [
+          {
+            "Ref": "colortellervpcPrivateSubnet1Subnet4AE82466"
+          },
+          {
+            "Ref": "colortellervpcPrivateSubnet2Subnet2722E5E5"
+          }
+        ],
+        "VpcEndpointType": "Interface"
+      },
+      "Metadata": {
+        "aws:cdk:path": "colorteller-network/colorteller-vpc/ECS_Agent/Resource"
+      }
+    }
+  },
+  "Outputs": {
+    "ExportsOutputRefcolortellervpcA393273978642635": {
+      "Value": {
+        "Ref": "colortellervpcA3932739"
+      },
+      "Export": {
+        "Name": "colorteller-network:ExportsOutputRefcolortellervpcA393273978642635"
+      }
+    },
+    "ExportsOutputRefcolortellervpcPrivateSubnet1Subnet4AE824668015203D": {
+      "Value": {
+        "Ref": "colortellervpcPrivateSubnet1Subnet4AE82466"
+      },
+      "Export": {
+        "Name": "colorteller-network:ExportsOutputRefcolortellervpcPrivateSubnet1Subnet4AE824668015203D"
+      }
+    },
+    "ExportsOutputRefcolortellervpcPrivateSubnet2Subnet2722E5E51EBB51DE": {
+      "Value": {
+        "Ref": "colortellervpcPrivateSubnet2Subnet2722E5E5"
+      },
+      "Export": {
+        "Name": "colorteller-network:ExportsOutputRefcolortellervpcPrivateSubnet2Subnet2722E5E51EBB51DE"
+      }
+    },
+    "ExportsOutputFnGetAttcolortellervpcA3932739CidrBlock3CB0FAC1": {
+      "Value": {
+        "Fn::GetAtt": [
+          "colortellervpcA3932739",
+          "CidrBlock"
+        ]
+      },
+      "Export": {
+        "Name": "colorteller-network:ExportsOutputFnGetAttcolortellervpcA3932739CidrBlock3CB0FAC1"
+      }
+    },
+    "ExportsOutputRefcolortellervpcPublicSubnet1Subnet87371C14EEED662C": {
+      "Value": {
+        "Ref": "colortellervpcPublicSubnet1Subnet87371C14"
+      },
+      "Export": {
+        "Name": "colorteller-network:ExportsOutputRefcolortellervpcPublicSubnet1Subnet87371C14EEED662C"
+      }
+    },
+    "ExportsOutputRefcolortellervpcPublicSubnet2SubnetA18F1BEB2D44EAC2": {
+      "Value": {
+        "Ref": "colortellervpcPublicSubnet2SubnetA18F1BEB"
+      },
+      "Export": {
+        "Name": "colorteller-network:ExportsOutputRefcolortellervpcPublicSubnet2SubnetA18F1BEB2D44EAC2"
+      }
+    }
+  }
+}
